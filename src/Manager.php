@@ -183,12 +183,7 @@ class Manager
 	{
 		$welcome = <<<WELCOME
 \033[36m
-                       _        
-                      | |       
-_ __   __ _ _ __ _   _| |_ ___  
-| '_ \ / _` | '__| | | | __/ _ \ 
-| | | | (_| | |  | |_| | || (_) |
-|_| |_|\__,_|_|   \__,_|\__\___/ .TIGERB.cn
+www.56br.com
 			
 An object-oriented multi process manager for PHP
 
@@ -359,6 +354,7 @@ WELCOME;
 				try {
 					// init worker instance
 					$worker = new Worker([
+						'type' => 'worker',
 						'pipe_dir' => $this->pipeDir
 					]);
 					$worker->pipeMake();

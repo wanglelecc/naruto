@@ -38,6 +38,8 @@ class Worker extends Process
 		$this->pid     = isset($config['pid'])? $config['pid']: $this->pid;
 		$this->pipeDir = isset($config['pipe_dir']) && ! empty($config['pipe_dir'])
 		? $config['pipe_dir']: $this->pipeDir;
+
+		$this->setProcessName();
 		
 		// log
 		ProcessException::info([

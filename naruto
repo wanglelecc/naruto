@@ -25,12 +25,7 @@ $help = function () {
         \033[33m passwd \033[0m: Unix user passwd
         \033[33m help \033[0m: Display command list
 
-                       _        
-                      | |       
-_ __   __ _ _ __ _   _| |_ ___  
-| '_ \ / _` | '__| | | | __/ _ \ 
-| | | | (_| | |  | |_| | || (_) |
-|_| |_|\__,_|_|   \__,_|\__\___/ .TIGERB.cn
+www.56br.com
 
 An object-oriented multi process manager for PHP
 
@@ -109,7 +104,7 @@ try {
 		// 'hangup_loop_microtime' => 200000
 		], function (Process $worker) {
 			// mock business logic
-            (new Test())->businessLogic();
+            (new Test())->businessLogic($worker);
 		}
 	);
 } catch (Ex $e) {

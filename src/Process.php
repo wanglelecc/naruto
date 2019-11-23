@@ -60,7 +60,7 @@ abstract class Process
 	 * @var string
 	 */
 	protected $pipeDir = '/tmp/';
-	
+
 	/**
 	 * pipe file path
 	 *
@@ -91,7 +91,7 @@ abstract class Process
 
 	/**
 	 * hangup sleep time unit:microsecond /μs
-	 * 
+	 *
 	 * default 200000μs
 	 *
 	 * @var int
@@ -100,16 +100,16 @@ abstract class Process
 
 	/**
 	 * max execute times
-	 * 
+	 *
 	 * default 5*60*60*24
 	 *
 	 * @var int
 	 */
-	protected static $maxExecuteTimes = 5*60*60*24;
+	protected static $maxExecuteTimes = 5 * 60 * 60 * 24;
 
 	/**
 	 * current execute times
-	 * 
+	 *
 	 * default 0
 	 *
 	 * @var int
@@ -118,26 +118,27 @@ abstract class Process
 
 	/**
 	 * construct function
-	 * 
+	 *
 	 * @param array $config config
 	 */
 	public function __construct($config = [])
 	{
-		if (empty($this->pid)) {
+		if ( empty( $this->pid ) ) {
 			$this->pid = posix_getpid();
 		}
-		$this->pipeName = $this->pipeNamePrefix . $this->pid;
-		$this->pipePath = $this->pipeDir . $this->pipeName;
+		$this->pipeName = $this->pipeNamePrefix . '.' . $this->pid;
+		$this->pipePath = $this->pipeDir . '.' . $this->pipeName;
 
 		// set hangup sleep time
-		self::$hangupLoopMicrotime = isset($config['hangup_loop_microtime'])? 
-		$config['hangup_loop_microtime']: self::$hangupLoopMicrotime;
+		self::$hangupLoopMicrotime = isset( $config[ 'hangup_loop_microtime' ] ) ?
+			$config[ 'hangup_loop_microtime' ] : self::$hangupLoopMicrotime;
 	}
 
 	/**
 	 * hungup abstract funtion
 	 *
 	 * @param Closure $closure
+	 *
 	 * @return void
 	 */
 	abstract protected function hangup(Closure $closure);
@@ -149,23 +150,23 @@ abstract class Process
 	 */
 	public function pipeMake()
 	{
-		if (! file_exists($this->pipePath)) {
-			if (! posix_mkfifo($this->pipePath, $this->pipeMode)) {
-				ProcessException::error([
+		if ( !file_exists( $this->pipePath ) ) {
+			if ( !posix_mkfifo( $this->pipePath, $this->pipeMode ) ) {
+				ProcessException::error( [
 					'msg' => [
 						'from'  => $this->type,
 						'extra' => "pipe make {$this->pipePath}",
-					]
-				]);
+					],
+				] );
 				exit;
 			}
-			chmod($this->pipePath, $this->pipeMode);
-			ProcessException::info([
+			chmod( $this->pipePath, $this->pipeMode );
+			ProcessException::info( [
 				'msg' => [
 					'from'  => $this->type,
-					'extra' => "pipe make {$this->pipePath}"
-				]
-			]);
+					'extra' => "pipe make {$this->pipePath}",
+				],
+			] );
 		}
 	}
 
@@ -176,62 +177,62 @@ abstract class Process
 	 */
 	public function pipeWrite($signal = '')
 	{
-		$pipe = fopen($this->pipePath, 'w');
-		if (! $pipe) {
-			ProcessException::error([
+		$pipe = fopen( $this->pipePath, 'w' );
+		if ( !$pipe ) {
+			ProcessException::error( [
 				'msg' => [
 					'from'  => $this->type,
-					'extra' => "pipe open {$this->pipePath}"
-				]
-			]);
+					'extra' => "pipe open {$this->pipePath}",
+				],
+			] );
 			return;
 		}
 
-		ProcessException::info([
+		ProcessException::info( [
 			'msg' => [
-					'from'  => $this->type,
-					'extra' => "pipe open {$this->pipePath}"
-				]
-		]);
-		
-		$res = fwrite($pipe, $signal);
-		if (! $res) {
-			ProcessException::error([
+				'from'  => $this->type,
+				'extra' => "pipe open {$this->pipePath}",
+			],
+		] );
+
+		$res = fwrite( $pipe, $signal );
+		if ( !$res ) {
+			ProcessException::error( [
 				'msg' => [
-					'from'  => $this->type,
-					'extra' => "pipe write {$this->pipePath}",
-					'signal'=> $signal,
-					'res'   => $res
-				]
-			]);
+					'from'   => $this->type,
+					'extra'  => "pipe write {$this->pipePath}",
+					'signal' => $signal,
+					'res'    => $res,
+				],
+			] );
 			return;
 		}
 
-		ProcessException::info([
+		ProcessException::info( [
 			'msg' => [
-					'from'  => $this->type,
-					'extra' => "pipe write {$this->pipePath}",
-					'signal'=> $signal,
-					'res'   => $res
-				]
-		]);
+				'from'   => $this->type,
+				'extra'  => "pipe write {$this->pipePath}",
+				'signal' => $signal,
+				'res'    => $res,
+			],
+		] );
 
-		if (! fclose($pipe)) {
-			ProcessException::error([
+		if ( !fclose( $pipe ) ) {
+			ProcessException::error( [
 				'msg' => [
 					'from'  => $this->type,
-					'extra' => "pipe close {$this->pipePath}"
-				]
-			]);
+					'extra' => "pipe close {$this->pipePath}",
+				],
+			] );
 			return;
 		}
 
-		ProcessException::info([
+		ProcessException::info( [
 			'msg' => [
-					'from'  => $this->type,
-					'extra' => "pipe close {$this->pipePath}"
-				]
-		]);
+				'from'  => $this->type,
+				'extra' => "pipe close {$this->pipePath}",
+			],
+		] );
 	}
 
 	/**
@@ -242,29 +243,29 @@ abstract class Process
 	public function pipeRead()
 	{
 		// check pipe
-		while (! file_exists($this->pipePath)) {
-			usleep(self::$hangupLoopMicrotime);
+		while ( !file_exists( $this->pipePath ) ) {
+			usleep( self::$hangupLoopMicrotime );
 		}
 
 		// open pipe
 		do {
 			// fopen() will block if the file to be opened is a fifo. This is true whether it's opened in "r" or "w" mode.  (See man 7 fifo: this is the correct, default behaviour; although Linux supports non-blocking fopen() of a fifo, PHP doesn't).
-			$workerPipe = fopen($this->pipePath, 'r+'); // The "r+" allows fopen to return immediately regardless of external  writer channel. 
-			usleep(self::$hangupLoopMicrotime);
-		} while (! $workerPipe);
+			$workerPipe = fopen( $this->pipePath, 'r+' ); // The "r+" allows fopen to return immediately regardless of external  writer channel.
+			usleep( self::$hangupLoopMicrotime );
+		} while ( !$workerPipe );
 
 		// set pipe switch a non blocking stream
-		stream_set_blocking($workerPipe, false);
+		stream_set_blocking( $workerPipe, false );
 
 		// read pipe
-		if ($msg = fread($workerPipe, $this->readPipeType)) {
-			ProcessException::info([
+		if ( $msg = fread( $workerPipe, $this->readPipeType ) ) {
+			ProcessException::info( [
 				'msg' => [
-					'from'  => $this->type,
-					'extra' => "pipe read {$this->pipePath}",
-					'signal'=> $msg,
-				]
-			]);
+					'from'   => $this->type,
+					'extra'  => "pipe read {$this->pipePath}",
+					'signal' => $msg,
+				],
+			] );
 		}
 		return $msg;
 	}
@@ -279,15 +280,15 @@ abstract class Process
 		$msg = [
 			'msg' => [
 				'from'  => $this->type,
-				'extra' => "pipe clear {$this->pipePath}"
-			]
+				'extra' => "pipe clear {$this->pipePath}",
+			],
 		];
-		ProcessException::info($msg);
-		if (! unlink($this->pipePath)) {
-			ProcessException::error($msg);
+		ProcessException::info( $msg );
+		if ( !unlink( $this->pipePath ) ) {
+			ProcessException::error( $msg );
 			return false;
 		}
-		shell_exec("rm -f {$this->pipePath}");
+		shell_exec( "rm -f {$this->pipePath}" );
 		return true;
 	}
 
@@ -301,13 +302,13 @@ abstract class Process
 		$msg = [
 			'msg' => [
 				'from'  => $this->type,
-				'extra' => "{$this->pid} stop"
-			]
+				'extra' => "{$this->pid} stop",
+			],
 		];
-		ProcessException::info($msg);
+		ProcessException::info( $msg );
 		$this->clearPipe();
-		if (! posix_kill($this->pid, SIGKILL)) {
-			ProcessException::error($msg);
+		if ( !posix_kill( $this->pid, SIGKILL ) ) {
+			ProcessException::error( $msg );
 			return false;
 		}
 		return true;
@@ -320,6 +321,6 @@ abstract class Process
 	 */
 	protected function setProcessName()
 	{
-		// cli_set_process_title('naruto master');
+		cli_set_process_title( 'laravel: ' . $this->type . ' process' );
 	}
 }
