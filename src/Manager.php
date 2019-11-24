@@ -321,6 +321,7 @@ WELCOME;
 				}
 				// clear pipe
 				$this->master->clearPipe();
+				$this->master->clearPid();
 				// kill -9 master process
 				echo "stop... \n";
 				exit;
@@ -335,6 +336,7 @@ WELCOME;
 				}
 				// clear pipe
 				$this->master->clearPipe();
+				$this->master->clearPid();
 				// kill -9 master process
 				echo "stop... \n";
 				exit;

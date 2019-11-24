@@ -7,7 +7,7 @@
  *                                                  *
  ****************************************************/
 
-namespace App\Demo;
+namespace App\demo;
 
 use Console\ProcessException;
 

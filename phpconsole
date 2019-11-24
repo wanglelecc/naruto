@@ -7,6 +7,15 @@
  *                                                  *
  ****************************************************/
 
+use Console\Manager;
+use Console\Process;
+use Console\ProcessException;
+use Exception as Ex;
+use App\demo\Test;
+
+// require composer autoload file
+require(__DIR__ . '/vendor/autoload.php');
+
 /**
  * 命令行参数list
  */
@@ -32,6 +41,7 @@ HELP;
     die($string);
 };
 
+
 /**
  * 获取参数
  */
@@ -52,64 +62,79 @@ foreach ($argv as $v) {
     }
 }
 
-// require composer autoload file
-require(__DIR__ . '/vendor/autoload.php');
+$cmd = strtolower($argv['1'] ?? '');
+//$ppid = intval(shell_exec("ps -ef | grep 'phpconsole' | grep 'master' | awk '{print $2}'"));
+$ppid = file_exists('storage/temp/master.pid') ? intval(file_get_contents('storage/temp/master.pid')) : 0;
 
-// register autoload
-spl_autoload_register('autoload');
-function autoload($class)
-{
-	$classOrigin = $class;
-    $classInfo   = explode('\\', $class);
-    $className   = array_pop($classInfo);
-    foreach ($classInfo as &$v) {
-        $v = strtolower($v);
-    }
-    unset($v);
-    array_push($classInfo, $className);
-    $class       = implode('\\', $classInfo);
-    $class       = str_replace('console', 'src', $class);
-    $classPath   = __DIR__ . '/'.str_replace('\\', '/', $class) . '.php';
-    require($classPath);
-}
-
-/* -----------------------demo------------------- */
-
-use Console\Manager;
-use Console\Process;
-use Console\ProcessException;
-use Exception as Ex;
-use App\Demo\Test;
-
-/**
- * example
- * 
- * $config = [
- * 		'passwd' => '123456', // unix user passwd
- * 		'worker_num' => 5, // worker start number
- * 		'hangup_loop_microtime' => 200000, // master&worker hangup loop microtime unit/μs
- * 		'pipe_dir' => '/tmp/', // the directory name of the process's pipe will be storaged
- * ]
- * new Manager($config, $closure)
- */
-try {
-	new Manager([
-        'os'         => $input['os']?? 'Linux',
-		'passwd' 	 => $input['passwd']?? '',
-		'worker_num' => $input['worker-num']?? 5,
-		// 'pipe_dir'   => '/tmp/phpconsole/'
-		// 'hangup_loop_microtime' => 200000
-		], function (Process $worker) {
-			// mock business logic
-            (new Test())->businessLogic($worker);
+switch ($cmd){
+	case 'start':
+		if($ppid > 0){
+			die( "phpconsole is already running...\n");
 		}
-	);
-} catch (Ex $e) {
-	ProcessException::error([
-		'msg' => [
-			'msg'  => $e->getMessage(),
-			'file' => $e->getFile(),
-			'line' => $e->getLine(),
-		]
-	]);
+		/**
+		 * example
+		 *
+		 * $config = [
+		 * 		'passwd' => '123456', // unix user passwd
+		 * 		'worker_num' => 5, // worker start number
+		 * 		'hangup_loop_microtime' => 200000, // master&worker hangup loop microtime unit/μs
+		 * 		'pipe_dir' => '/tmp/', // the directory name of the process's pipe will be storaged
+		 * ]
+		 * new Manager($config, $closure)
+		 */
+		try {
+			new Manager([
+				'os'         => $input['os']?? 'Linux',
+				'passwd' 	 => $input['passwd']?? '',
+				'worker_num' => $input['worker-num']?? 5,
+				// 'pipe_dir'   => '/tmp/phpconsole/'
+				// 'hangup_loop_microtime' => 200000
+			], function (Process $worker) {
+				// mock business logic
+				(new Test())->businessLogic($worker);
+			}
+			);
+		} catch (Ex $e) {
+			ProcessException::error([
+				'msg' => [
+					'msg'  => $e->getMessage(),
+					'file' => $e->getFile(),
+					'line' => $e->getLine(),
+				]
+			]);
+		}
+		break;
+	case 'reload':
+		if($ppid < 1){
+			die("phpconsole is not running...\n");
+		}
+
+		posix_kill($ppid, SIGUSR1);
+
+		echo "reload signal be sent success...\n";
+
+		break;
+	case 'quit':
+		if($ppid < 1){
+			die("phpconsole is not running...\n");
+		}
+
+		posix_kill($ppid, SIGUSR2);
+
+		echo "quit signal be sent success...\n";
+
+		break;
+	case 'stop':
+		if($ppid < 1){
+			die("phpconsole is not running...\n");
+		}
+
+		posix_kill($ppid, SIGTERM);
+
+		echo "stop signal be sent success...\n";
+
+		break;
+	default :
+		$help();
+		break;
 }
