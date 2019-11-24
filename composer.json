@@ -1,21 +1,21 @@
 {
-    "name": "tigerb/naruto",
+    "name": "wanglelecc/console",
     "description": "An object-oriented multi process manager for PHP",
     "type": "project",
-    "homepage": "http://tigerb.cn",
+    "homepage": "https://www.laracms.cn/",
     "minimum-stability": "stable",
     "license": "MIT",
     "authors": [
         {
-            "name": "TIGERB",
-            "email": "tigerbcode@gmail.com"
+            "name": "wanglelecc",
+            "email": "wanglelecc@gmail.com"
         }
     ],
     "require": {
     },
     "autoload": {
         "psr-4": {
-            "Naruto\\": "/src/",
+            "Console\\": "/src/",
             "App\\": "/app/"
         }
     },

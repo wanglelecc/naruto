@@ -1,15 +1,13 @@
 <?php
 /****************************************************
- *                     naruto                       *
+ *                     phpconsole                   *
  *                                                  *
  * An object-oriented multi process manager for PHP *
  *                                                  *
- *                    TIERGB                        *
- *           <https://github.com/TIGERB>            *
  *                                                  *
  ****************************************************/
 
-namespace Naruto;
+namespace Console;
 
 use Exception;
 
@@ -30,7 +28,7 @@ class ProcessException extends Exception
 	 *
 	 * @var string
 	 */
-	private static $logPath = '/tmp/naruto';
+	private static $logPath = '/tmp/phpconsole';
 	
 	/**
 	 * the magic __callStatics function

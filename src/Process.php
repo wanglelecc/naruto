@@ -1,17 +1,15 @@
 <?php
 /****************************************************
- *                     naruto                       *
+ *                     phpconsole                   *
  *                                                  *
  * An object-oriented multi process manager for PHP *
  *                                                  *
- *                    TIERGB                        *
- *           <https://github.com/TIGERB>            *
  *                                                  *
  ****************************************************/
 
-namespace Naruto;
+namespace Console;
 
-use Naruto\ProcessException;
+use Console\ProcessException;
 use Closure;
 
 /**
@@ -52,7 +50,7 @@ abstract class Process
 	 *
 	 * @var string
 	 */
-	protected $pipeNamePrefix = 'naruto.pipe';
+	protected $pipeNamePrefix = 'phpconsole.pipe';
 
 	/**
 	 * the folder for pipe file store

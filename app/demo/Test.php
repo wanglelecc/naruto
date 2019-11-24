@@ -1,17 +1,15 @@
 <?php
 /****************************************************
- *                     naruto                       *
+ *                     phpconsole                   *
  *                                                  *
  * An object-oriented multi process manager for PHP *
  *                                                  *
- *                    TIERGB                        *
- *           <https://github.com/TIGERB>            *
  *                                                  *
  ****************************************************/
 
 namespace App\Demo;
 
-use Naruto\ProcessException;
+use Console\ProcessException;
 
 class Test
 {

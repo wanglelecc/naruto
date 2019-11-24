@@ -1,20 +1,18 @@
 <?php
 /****************************************************
- *                     naruto                       *
+ *                     phpconsole                   *
  *                                                  *
  * An object-oriented multi process manager for PHP *
  *                                                  *
- *                    TIERGB                        *
- *           <https://github.com/TIGERB>            *
  *                                                  *
  ****************************************************/
 
-namespace Naruto;
+namespace Console;
 
-use Naruto\Master;
-use Naruto\Daemon;
-use Naruto\Worker;
-use Naruto\ProcessException;
+use Console\Master;
+use Console\Daemon;
+use Console\Worker;
+use Console\ProcessException;
 use Closure;
 use Exception;
 
@@ -331,7 +329,7 @@ WELCOME;
 	private function registerSigHandler()
 	{
 		foreach ($this->signalSupport as $v) {
-			pcntl_signal($v, ['Naruto\Manager', 'defineSigHandler']);
+			pcntl_signal($v, ['Console\Manager', 'defineSigHandler']);
 		}
 	}
 

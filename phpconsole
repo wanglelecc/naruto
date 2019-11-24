@@ -1,11 +1,9 @@
 <?php
 /****************************************************
- *                     naruto                       *
+ *                     phpconsole                   *
  *                                                  *
  * An object-oriented multi process manager for PHP *
  *                                                  *
- *                    TIERGB                        *
- *           <https://github.com/TIGERB>            *
  *                                                  *
  ****************************************************/
 
@@ -15,21 +13,19 @@
 $help = function () {
     $string =  <<<HELP
     \033[36m Usage \033[0m:
-        php naruto --<arguments>=<value> ...
+        php phpconsole --<arguments>=<value> ...
 
     \033[36m Example \033[0m:
-        php naruto --worker-num=5 --passwd=123456
+        php start --worker-num=5 --passwd=123456
 
     \033[36m Params mean \033[0m:
         \033[33m worker-num \033[0m: Worker start number
         \033[33m passwd \033[0m: Unix user passwd
         \033[33m help \033[0m: Display command list
 
-www.56br.com
-
 An object-oriented multi process manager for PHP
 
-Version: 0.5.0
+Version: 1.0.0
     \n
 HELP;
 
@@ -72,15 +68,16 @@ function autoload($class)
     unset($v);
     array_push($classInfo, $className);
     $class       = implode('\\', $classInfo);
-    $class       = str_replace('naruto', 'src', $class);
+    $class       = str_replace('console', 'src', $class);
     $classPath   = __DIR__ . '/'.str_replace('\\', '/', $class) . '.php';
     require($classPath);
 }
 
 /* -----------------------demo------------------- */
 
-use Naruto\Manager;
-use Naruto\Process;
+use Console\Manager;
+use Console\Process;
+use Console\ProcessException;
 use Exception as Ex;
 use App\Demo\Test;
 
@@ -100,7 +97,7 @@ try {
         'os'         => $input['os']?? 'Linux',
 		'passwd' 	 => $input['passwd']?? '',
 		'worker_num' => $input['worker-num']?? 5,
-		// 'pipe_dir'   => '/tmp/naruto/'
+		// 'pipe_dir'   => '/tmp/phpconsole/'
 		// 'hangup_loop_microtime' => 200000
 		], function (Process $worker) {
 			// mock business logic
