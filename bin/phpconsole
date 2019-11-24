@@ -5,7 +5,8 @@ os=$(uname)
 
 if [[ "$os" == 'Linux' ]]
 then
-    ppid=$(pstree -aps | grep 'phpconsole' | grep 'php' | awk -F ',' '{if(NR==1){print $2}}' | awk '{print $1}')
+#    ppid=$(pstree -aps | grep 'phpconsole' | grep 'php' | awk -F ',' '{if(NR==1){print $2}}' | awk '{print $1}')
+    ppid=$(ps -ef | grep 'phpconsole' | grep 'master' | awk '{print $2}')
 elif [[ "$os" == 'Darwin' ]]
 then
     ppid=$(pstree | grep 'phpconsole --worker-num' | grep '\-+' | awk '{print $4}')

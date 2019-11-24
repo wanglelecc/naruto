@@ -23,7 +23,7 @@ class Manager
 {
 	/**
 	 * operation system
-	 * 
+	 *
 	 * Linux/Darwin
 	 *
 	 * @var string
@@ -49,19 +49,19 @@ class Manager
 	 *
 	 * @var array [Process]
 	 */
-	public  $workers = [];
+	public $workers = [];
 
 	/**
 	 * the pool for the worker that will be handle by the signal
 	 *
 	 * signal: string reload/stop
 	 * pool: array [Process]
-	 * 
+	 *
 	 * @var array
 	 */
 	private $waitSignalProcessPool = [
 		'signal' => '',
-		'pool'	 => []
+		'pool'   => [],
 	];
 
 	/**
@@ -116,12 +116,12 @@ class Manager
 		'reload'    => 10, // reload signal
 		'stop'      => 12, // quit signal gracefully stop
 		'terminate' => 15, // terminate signal forcefully stop
-		'int'	 	=> 2 // interrupt signal
+		'int'       => 2 // interrupt signal
 	];
 
 	/**
 	 * hangup sleep time unit:microsecond /μs
-	 * 
+	 *
 	 * default 200000μs
 	 *
 	 * @var int
@@ -137,13 +137,16 @@ class Manager
 		$this->loadEnv();
 
 		// set timezone
-		date_default_timezone_set($this->env['config']['timezone']?? 'Asia/Shanghai');
+		date_default_timezone_set( $this->env[ 'config' ][ 'timezone' ] ?? 'Asia/Shanghai' );
 
 		// welcome
 		$this->welcome();
 
 		// configure
-		$this->configure($config);
+		$this->configure( $config );
+
+		// 守护环境
+		$this->daemonEnv();
 
 		// init master instance
 		$this->master = new Master();
@@ -157,11 +160,11 @@ class Manager
 		// int signal num
 		$this->signalSupport = [
 			'reload'    => SIGUSR1,
-			'stop'	    => SIGUSR2,
+			'stop'      => SIGUSR2,
 			'terminate' => SIGTERM,
-			'int'		=> SIGINT
+			'int'       => SIGINT,
 		];
-		
+
 		// exectue fork
 		$this->execFork();
 
@@ -170,6 +173,26 @@ class Manager
 
 		// hangup master
 		$this->hangup();
+	}
+
+	/**
+	 * daemon mode
+	 *
+	 * @return void
+	 */
+	public function daemonEnv()
+	{
+		$pid = pcntl_fork();
+
+		if ( $pid == -1 ) {
+			die( "fork(1) failed!\n" );
+		} elseif ( $pid > 0 ) {
+			//让由用户启动的进程退出
+			exit( 0 );
+		}
+
+		// 脱离当前终端
+		posix_setsid();
 	}
 
 	/**
@@ -189,7 +212,7 @@ Version: 0.5.0
 
 \033[0m
 WELCOME;
-		
+
 		echo $welcome;
 	}
 
@@ -199,21 +222,21 @@ WELCOME;
 	private function loadEnv()
 	{
 		$envPath = __DIR__ . '/../';
-		if (!file_exists($envPath . '.env')) {
-			copy($envPath . '.env.example', $envPath . '.env');
+		if ( !file_exists( $envPath . '.env' ) ) {
+			copy( $envPath . '.env.example', $envPath . '.env' );
 		}
-		if (!$this->env = parse_ini_file($envPath . '.env', true)) {
-			ProcessException::error([
+		if ( !$this->env = parse_ini_file( $envPath . '.env', true ) ) {
+			ProcessException::error( [
 				'msg' => [
-					'msg'  => 'Parse ini file fail',
-				]
-			]);
+					'msg' => 'Parse ini file fail',
+				],
+			] );
 		}
 	}
 
 	/**
 	 * the _get magic function
-	 * 
+	 *
 	 * @param string $name property name
 	 */
 	public function __get($name = '')
@@ -225,99 +248,101 @@ WELCOME;
 	 * configure
 	 *
 	 * @param array $config
+	 *
 	 * @return void
 	 */
 	public function configure($config = [])
 	{
 		// set os type
-		$this->os = $config['os']?? $this->os;
+		$this->os = $config[ 'os' ] ?? $this->os;
 
 		// set user password
-		$this->userPasswd = $config['passwd']?? '';
-		
+		$this->userPasswd = $config[ 'passwd' ] ?? '';
+
 		// set worker start number
-		$this->startNum = (int)$config['worker_num']?? $this->startNum;
+		$this->startNum = (int)$config[ 'worker_num' ] ?? $this->startNum;
 
 		// set hangup sleep time
-		self::$hangupLoopMicrotime = $config['hangup_loop_microtime']?? self::$hangupLoopMicrotime;
+		self::$hangupLoopMicrotime = $config[ 'hangup_loop_microtime' ] ?? self::$hangupLoopMicrotime;
 
 		// set pipe dir
-		$this->pipeDir = $config['pipe_dir']?? '';
+		$this->pipeDir = $config[ 'pipe_dir' ] ?? '';
 	}
 
 	/**
 	 * define signal handler
 	 *
 	 * @param integer $signal
+	 *
 	 * @return void
 	 */
 	public function defineSigHandler($signal = 0)
 	{
-		switch ($signal) {
+		switch ( $signal ) {
 			// reload signal
-			case $this->signalSupport['reload']:
+			case $this->signalSupport[ 'reload' ]:
 				// throw worker process to waitSignalProcessPool
 				$this->waitSignalProcessPool = [
 					'signal' => 'reload',
-					'pool'	 => $this->workers
+					'pool'   => $this->workers,
 				];
 				// push reload signal to the worker processes from the master process
-				foreach ($this->workers as $v) {
-					$v->pipeWrite('reload');
+				foreach ( $this->workers as $v ) {
+					$v->pipeWrite( 'reload' );
 				}
-			break;
+				break;
 
 			// kill signal
-			case $this->signalSupport['stop']:
+			case $this->signalSupport[ 'stop' ]:
 				// throw worker process to waitSignalProcessPool
 				$this->waitSignalProcessPool = [
 					'signal' => 'stop',
-					'pool'	 => $this->workers
+					'pool'   => $this->workers,
 				];
 				// push reload signal to the worker processes from the master process
-				foreach ($this->workers as $v) {
-					$v->pipeWrite('stop');
+				foreach ( $this->workers as $v ) {
+					$v->pipeWrite( 'stop' );
 				}
-			break;
+				break;
 
-			case $this->signalSupport['int']:
-				foreach ($this->workers as $v) {
+			case $this->signalSupport[ 'int' ]:
+				foreach ( $this->workers as $v ) {
 					// clear pipe
 					$v->clearPipe();
 					// kill -9 all worker process
-					$result = posix_kill($v->pid, SIGKILL);
-					ProcessException::info([
+					$result = posix_kill( $v->pid, SIGKILL );
+					ProcessException::info( [
 						'msg' => [
 							'from'   => $this->master->type,
 							'extra'  => "kill -SIGKILL {$v->pid}",
-							'result' => $result
-						]
-					]);
+							'result' => $result,
+						],
+					] );
 				}
 				// clear pipe
 				$this->master->clearPipe();
 				// kill -9 master process
 				echo "stop... \n";
 				exit;
-			break;
-			
-			case $this->signalSupport['terminate']:
-				foreach ($this->workers as $v) {
+				break;
+
+			case $this->signalSupport[ 'terminate' ]:
+				foreach ( $this->workers as $v ) {
 					// clear pipe
 					$v->clearPipe();
 					// kill -9 all worker process
-					posix_kill($v->pid, SIGKILL);
+					posix_kill( $v->pid, SIGKILL );
 				}
 				// clear pipe
 				$this->master->clearPipe();
 				// kill -9 master process
 				echo "stop... \n";
 				exit;
-			break;
+				break;
 
 			default:
 
-			break;
+				break;
 		}
 	}
 
@@ -328,8 +353,8 @@ WELCOME;
 	 */
 	private function registerSigHandler()
 	{
-		foreach ($this->signalSupport as $v) {
-			pcntl_signal($v, ['Console\Manager', 'defineSigHandler']);
+		foreach ( $this->signalSupport as $v ) {
+			pcntl_signal( $v, [ 'Console\Manager', 'defineSigHandler' ] );
 		}
 	}
 
@@ -341,51 +366,51 @@ WELCOME;
 	private function fork()
 	{
 		$pid = pcntl_fork();
-		
-		switch ($pid) {
+
+		switch ( $pid ) {
 			case -1:
 				// exception
 				exit;
 				break;
-	
+
 			case 0:
 				try {
 					// init worker instance
-					$worker = new Worker([
-						'type' => 'worker',
-						'pipe_dir' => $this->pipeDir
-					]);
+					$worker = new Worker( [
+						'type'     => 'worker',
+						'pipe_dir' => $this->pipeDir,
+					] );
 					$worker->pipeMake();
-					$worker->hangup($this->workBusinessClosure);
-				} catch (Exception $e) {
-					ProcessException::error([
+					$worker->hangup( $this->workBusinessClosure );
+				} catch ( Exception $e ) {
+					ProcessException::error( [
 						'msg' => [
 							'msg'  => $e->getMessage(),
 							'file' => $e->getFile(),
 							'line' => $e->getLine(),
-						]
-					]);
+						],
+					] );
 				}
 
 				// worker exit
 				exit;
 				break;
-	
+
 			default:
 				try {
-					$worker = new Worker([
+					$worker                = new Worker( [
 						'type' => 'master',
-						'pid'  => $pid
-					]);
-					$this->workers[$pid] = $worker;
-				} catch (Exception $e) {
-					ProcessException::error([
+						'pid'  => $pid,
+					] );
+					$this->workers[ $pid ] = $worker;
+				} catch ( Exception $e ) {
+					ProcessException::error( [
 						'msg' => [
 							'msg'  => $e->getMessage(),
 							'file' => $e->getFile(),
 							'line' => $e->getLine(),
-						]
-					]);
+						],
+					] );
 				}
 				break;
 		}
@@ -395,11 +420,12 @@ WELCOME;
 	 * execute fork worker operation
 	 *
 	 * @param int $num the number that the worker will be start
+	 *
 	 * @return void
 	 */
 	public function execFork($num = 0)
 	{
-		foreach (range(1, $num? : $this->startNum) as $v) {
+		foreach ( range( 1, $num ?: $this->startNum ) as $v ) {
 			$this->fork();
 		}
 	}
@@ -409,44 +435,44 @@ WELCOME;
 	 */
 	private function hangup()
 	{
-		while (true) {
+		while ( true ) {
 			// dispatch signal for the handlers
 			pcntl_signal_dispatch();
 
 			// daemon process
-			$this->daemon->check($this);
+			$this->daemon->check( $this );
 
 			// prevent the child process become a zombie process
 			// pcntl_wait($status);
-			foreach ($this->workers as $k => $v) {
-				$res = pcntl_waitpid($v->pid, $status, WNOHANG);
+			foreach ( $this->workers as $k => $v ) {
+				$res = pcntl_waitpid( $v->pid, $status, WNOHANG );
 				// if ($res == -1 || $res = 0) {
 				// 	// exception
 				// 	continue;
 				// }
-				if ($res > 0) {
-					unset($this->workers[$res]);
-					
-					if ($this->waitSignalProcessPool['signal'] === 'reload') {
-						if (array_key_exists($res, $this->waitSignalProcessPool['pool'])) {
-							unset($this->waitSignalProcessPool['pool'][$res]);
+				if ( $res > 0 ) {
+					unset( $this->workers[ $res ] );
+
+					if ( $this->waitSignalProcessPool[ 'signal' ] === 'reload' ) {
+						if ( array_key_exists( $res, $this->waitSignalProcessPool[ 'pool' ] ) ) {
+							unset( $this->waitSignalProcessPool[ 'pool' ][ $res ] );
 							// fork a new worker
 							$this->fork();
 						}
 					}
 
-					if ($this->waitSignalProcessPool['signal'] === 'stop') {
-						if (array_key_exists($res, $this->waitSignalProcessPool['pool'])) {
-							unset($this->waitSignalProcessPool['pool'][$res]);
+					if ( $this->waitSignalProcessPool[ 'signal' ] === 'stop' ) {
+						if ( array_key_exists( $res, $this->waitSignalProcessPool[ 'pool' ] ) ) {
+							unset( $this->waitSignalProcessPool[ 'pool' ][ $res ] );
 						}
 					}
 
 				}
 			}
 
-			if ($this->waitSignalProcessPool['signal'] === 'stop') {
+			if ( $this->waitSignalProcessPool[ 'signal' ] === 'stop' ) {
 				// all worker stop then stop the master process
-				if (empty($this->waitSignalProcessPool['pool'])) {
+				if ( empty( $this->waitSignalProcessPool[ 'pool' ] ) ) {
 					$this->master->stop();
 				}
 			}
@@ -455,7 +481,7 @@ WELCOME;
 			// $this->master->pipeRead();
 
 			// precent cpu usage rate reach 100%
-			usleep(self::$hangupLoopMicrotime);
+			usleep( self::$hangupLoopMicrotime );
 		}
 	}
 }

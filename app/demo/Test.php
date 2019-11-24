@@ -26,6 +26,6 @@ class Test
 
         // mock business logic
 //        usleep(1000000);
-		sleep(5);
+		sleep(1);
     }
 }

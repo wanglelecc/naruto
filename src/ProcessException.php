@@ -60,7 +60,7 @@ class ProcessException extends Exception
 	 */
 	private static function decorate($rank = 'info', $msg = [])
 	{
-		$time        = date('Y-m-d H: i: s', time());
+		$time        = date('Y-m-d H:i:s', time());
 		$pid         = posix_getpid();
 		$memoryUsage = round(memory_get_usage()/1024, 2) . ' kb';
 		switch ($rank) {

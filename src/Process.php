@@ -103,7 +103,8 @@ abstract class Process
 	 *
 	 * @var int
 	 */
-	protected static $maxExecuteTimes = 5 * 60 * 60 * 24;
+//	protected static $maxExecuteTimes = 5 * 60 * 60 * 24;
+	protected static $maxExecuteTimes = 10;
 
 	/**
 	 * current execute times
@@ -319,6 +320,6 @@ abstract class Process
 	 */
 	protected function setProcessName()
 	{
-		cli_set_process_title( 'laravel: ' . $this->type . ' process' );
+		cli_set_process_title( 'phpconsole: ' . $this->type . ' process' );
 	}
 }
