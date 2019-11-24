@@ -31,12 +31,11 @@ new Manager([], function (Process $worker) {
 
 ### Run
 
-> echo export $PHPCONSOLE_PATH=$(pwd) >> ~/.profile && echo 'export PATH="$PATH:$$PHPCONSOLE_PATH/bin"' >> ~/.profile && source ~/.profile
 
 > composer install
 
 ```
-phpconsole start/reload/quit/stop
+php phpconsole start/reload/quit/stop --worker-num=2  > /dev/null &
 ```
 
 ### Manager process
@@ -51,4 +50,4 @@ phpconsole start/reload/quit/stop
 - English
 
 ## Acknowledgments
--- https://github.com/TIGERB/naruto
+- https://github.com/TIGERB/naruto
