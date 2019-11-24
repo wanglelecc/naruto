@@ -50,3 +50,5 @@ phpconsole start/reload/quit/stop
 
 - English
 
+## Acknowledgments
+-- https://github.com/TIGERB/naruto
