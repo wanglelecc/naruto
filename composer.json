@@ -24,5 +24,11 @@
         "post-root-project-cmd": [
             "cp .env.example .env"
         ]
+    },
+    "repositories": {
+        "packagist": {
+            "type": "composer",
+            "url": "https://mirrors.aliyun.com/composer/"
+        }
     }
 }
