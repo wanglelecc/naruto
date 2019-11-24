@@ -1,6 +1,6 @@
 <?php
 /****************************************************
- *                     phpconsole                   *
+ *                     phpConsole                   *
  *                                                  *
  * An object-oriented multi process manager for PHP *
  *                                                  *

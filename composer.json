@@ -1,5 +1,5 @@
 {
-    "name": "wanglelecc/console",
+    "name": "wanglelecc/phpconsole",
     "description": "An object-oriented multi process manager for PHP",
     "type": "project",
     "homepage": "https://www.laracms.cn/",
@@ -12,6 +12,7 @@
         }
     ],
     "require": {
+        "php": "^7.1.3"
     },
     "autoload": {
         "psr-4": {

@@ -1,6 +1,6 @@
 <?php
 /****************************************************
- *                     phpconsole                   *
+ *                     phpConsole                   *
  *                                                  *
  * An object-oriented multi process manager for PHP *
  *                                                  *
@@ -146,7 +146,7 @@ class Manager
 		$this->configure( $config );
 
 		// 守护环境
-		$this->daemonEnv();
+//		$this->daemonEnv();
 
 		// init master instance
 		$this->master = new Master();
