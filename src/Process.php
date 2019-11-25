@@ -108,7 +108,7 @@ abstract class Process
 	 * @var int
 	 */
 //	protected static $maxExecuteTimes = 5 * 60 * 60 * 24;
-	protected static $maxExecuteTimes = 10;
+	protected static $maxExecuteTimes = 60 * 60 * 24;
 
 	/**
 	 * current execute times
