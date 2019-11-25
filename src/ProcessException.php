@@ -45,7 +45,7 @@ class ProcessException extends Exception
 		}
 		self::$logPath = (isset($data['path'])? $data['path']: '')? : self::$logPath;
         $msg = self::decorate($method, $data['msg']);
-		error_log($msg, 3, self::$logPath . '-' . date('Y-m-d', time()) . '.log');
+		error_log($msg, 3, self::$logPath . '.' . date('Y-m-d', time()) . '.log');
 		if ($method === 'error') {
 			exit;
 		}
@@ -63,24 +63,26 @@ class ProcessException extends Exception
 		$time        = date('Y-m-d H:i:s', time());
 		$pid         = posix_getpid();
 		$memoryUsage = round(memory_get_usage()/1024, 2) . ' kb';
-		switch ($rank) {
+
+		switch ($rank = strtolower($rank)) {
 			case 'info':
-				$rank = "\033[36m{$rank} \033[0m";
+				$cRank = "\033[36m{$rank} \033[0m";
 			break;
 			case 'error':
-				$rank = "\033[31m{$rank}\033[0m";
+				$cRank = "\033[31m{$rank}\033[0m";
 			break;
 			case 'debug':
-				$rank = "\033[32m{$rank}\033[0m";
+				$cRank = "\033[32m{$rank}\033[0m";
 			break;
 
 			default:
-			
+				$cRank = $rank;
 			break;
 		}
+
 		$default = [
 			$time,
-			$rank,
+			$cRank,
 			$pid,
 			$memoryUsage
 		];
@@ -91,16 +93,11 @@ class ProcessException extends Exception
 		}
 
 		$msg  = array_merge($default, $msg);
-		$tmp  = '';
-		foreach ($msg as $k => $v) {
-			if ($k === 0) {
-				$tmp = "{$v}";
-				continue;
-			}
-			$tmp .= " | {$v}";
-		}
-		$tmp .= PHP_EOL;
-		echo $tmp;
-        return $tmp;
+
+		echo implode(' | ', $msg) . PHP_EOL;
+
+		$msg[1] = $rank;
+
+        return implode(' | ', $msg) . PHP_EOL;
 	}
 }
