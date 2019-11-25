@@ -21,31 +21,35 @@ class Worker extends Process
 	/**
 	 * construct function
 	 *
-	 * @param string $msg
+	 * @param string  $msg
 	 * @param integer $pid
-	 * @param string $type
-	 * @param array $config config [
-	 * 	'pid' => 1212,
-	 * 	'type'=> 'worker',
-	 *  'pipe_dir' => '/tmp/'
-	 * ]
+	 * @param string  $type
+	 * @param array   $config config [
+	 *                        'pid' => 1212,
+	 *                        'type'=> 'worker',
+	 *                        'pipe_dir' => '/tmp/'
+	 *                        ]
 	 */
 	public function __construct($config = [])
 	{
-		$this->type    = isset($config['type'])? $config['type']: 'worker';
-		$this->pid     = isset($config['pid'])? $config['pid']: $this->pid;
-		$this->pipeDir = isset($config['pipe_dir']) && ! empty($config['pipe_dir'])
-		? $config['pipe_dir']: $this->pipeDir;
+		$this->type    = isset( $config[ 'type' ] ) ? $config[ 'type' ] : 'worker';
+		$this->pid     = isset( $config[ 'pid' ] ) ? $config[ 'pid' ] : $this->pid;
+		$this->pipeDir = isset( $config[ 'pipe_dir' ] ) && !empty( $config[ 'pipe_dir' ] )
+			? $config[ 'pipe_dir' ] : $this->pipeDir;
+
+		$this->tmpDir  = isset( $config[ 'tmp_dir' ] ) ? $config[ 'tmp_dir' ] : $this->tmpDir;
+		$this->appName = isset( $config[ 'app_name' ] ) ? $config[ 'app_name' ] : $this->appName;
+
 
 		$this->setProcessName();
-		
+
 		// log
-		ProcessException::info([
+		ProcessException::info( [
 			'msg' => [
 				'from'  => $this->type,
-				'extra' => 'worker instance create'
-			]
-		]);
+				'extra' => 'worker instance create',
+			],
+		] );
 		parent::__construct();
 	}
 
@@ -53,26 +57,27 @@ class Worker extends Process
 	 * the work hungup function
 	 *
 	 * @param Closure $closure
+	 *
 	 * @return void
 	 */
 	public function hangup(Closure $closure)
 	{
-		while (true) {
+		while ( true ) {
 			// business logic
-			$closure($this);
+			$closure( $this );
 
 			// check exit flag
-			if ($this->workerExitFlag) {
+			if ( $this->workerExitFlag ) {
 				$this->workerExit();
 			}
 
 			// check max execute time
-			if (self::$currentExecuteTimes >= self::$maxExecuteTimes) {
+			if ( self::$currentExecuteTimes >= self::$maxExecuteTimes ) {
 				$this->workerExit();
 			}
 
 			// handle pipe msg
-			if ($this->signal = $this->pipeRead()) {
+			if ( $this->signal = $this->pipeRead() ) {
 				$this->dispatchSig();
 			}
 
@@ -80,7 +85,7 @@ class Worker extends Process
 			++self::$currentExecuteTimes;
 
 			// precent cpu usage rate reach 100%
-			usleep(self::$hangupLoopMicrotime);
+			usleep( self::$hangupLoopMicrotime );
 		}
 	}
 
@@ -91,20 +96,20 @@ class Worker extends Process
 	 */
 	private function dispatchSig()
 	{
-		switch ($this->signal) {
+		switch ( $this->signal ) {
 			// reload
 			case 'reload':
-			$this->workerExitFlag = true;
-			break;
-			
+				$this->workerExitFlag = true;
+				break;
+
 			// stop
 			case 'stop':
-			$this->workerExitFlag = true;
-			break;
+				$this->workerExitFlag = true;
+				break;
 
 			default:
 
-			break;
+				break;
 		}
 	}
 
@@ -115,13 +120,13 @@ class Worker extends Process
 	 */
 	private function workerExit()
 	{
-		ProcessException::info([
+		ProcessException::info( [
 			'msg' => [
 				'from'   => $this->type,
 				'signal' => $this->signal,
-				'extra'  => 'worker process exit'
-			]
-		]);
+				'extra'  => 'worker process exit',
+			],
+		] );
 		$this->clearPipe();
 		exit;
 	}

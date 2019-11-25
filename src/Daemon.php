@@ -22,9 +22,12 @@ class Daemon extends Process
 	/**
 	 * construct function
 	 */
-	public function __construct()
+	public function __construct($config = [])
 	{
 		$this->type = 'daemon';
+
+		$this->tmpDir  = isset( $config[ 'tmp_dir' ] ) ? $config[ 'tmp_dir' ] : $this->tmpDir;
+		$this->appName = isset( $config[ 'app_name' ] ) ? $config[ 'app_name' ] : $this->appName;
 		
 		ProcessException::info([
 			'msg' => [

@@ -20,36 +20,46 @@ use Closure;
 class Master extends Process
 {
 
-	protected $pidPath = 'storage/temp/master.pid';
+	protected $pidDir = '';
+
+	protected $pidPath = '';
 
 	/**
 	 * construct function
 	 */
-	public function __construct()
+	public function __construct($config = [])
 	{
 		$this->type = 'master';
 		$this->setProcessName();
+
 		parent::__construct();
-		
-		ProcessException::info([
+
+		ProcessException::info( [
 			'msg' => [
 				'from'  => 'master',
-				'extra' => 'master instance create'
-			]
-		]);
+				'extra' => 'master instance create',
+			],
+		] );
+
+		$this->tmpDir  = isset( $config[ 'tmp_dir' ] ) ? $config[ 'tmp_dir' ] : $this->tmpDir;
+		$this->appName = isset( $config[ 'app_name' ] ) ? $config[ 'app_name' ] : $this->appName;
+
+		$this->pidDir  = $this->tmpDir;
+		$this->pidPath = $this->pidDir . 'master.pid';
 
 		// make pipe
 		$this->pipeMake();
 
 		// make pid
 		$this->pidMake();
-		
+
 	}
 
 	/**
 	 * hangup function
 	 *
 	 * @param Closure $closure
+	 *
 	 * @return void
 	 */
 	public function hangup(Closure $closure)
@@ -60,18 +70,18 @@ class Master extends Process
 
 	public function pidMake()
 	{
-		$pidDir = dirname($this->pidPath);
+		$pidDir = dirname( $this->pidPath );
 		if ( !file_exists( $pidDir ) ) {
-			mkdir($pidDir, 755, true);
+			mkdir( $pidDir, 755, true );
 		}
 
-		file_put_contents($this->pidPath, posix_getpid());
+		file_put_contents( $this->pidPath, posix_getpid() );
 	}
 
 	public function clearPid()
 	{
 		if ( file_exists( $this->pidPath ) ) {
-			unlink($this->pidPath);
+			unlink( $this->pidPath );
 		}
 	}
 }

@@ -21,6 +21,11 @@ use Exception;
  */
 class Manager
 {
+
+	public $appName = 'phpconsole';
+
+	public $tmpDir = 'storage/tmp';
+
 	/**
 	 * operation system
 	 *
@@ -149,10 +154,18 @@ class Manager
 //		$this->daemonEnv();
 
 		// init master instance
-		$this->master = new Master();
+		$this->master = new Master([
+			'pipe_dir' => $this->pipeDir,
+			'tmp_dir'  => $this->tmpDir,
+			'app_name' => $this->appName,
+		]);
 
 		// init daemon instance
-		$this->daemon = new Daemon();
+		$this->daemon = new Daemon([
+			'pipe_dir' => $this->pipeDir,
+			'tmp_dir'  => $this->tmpDir,
+			'app_name' => $this->appName,
+		]);
 
 		// register worker business logic
 		$this->workBusinessClosure = $closure;
@@ -267,6 +280,10 @@ WELCOME;
 
 		// set pipe dir
 		$this->pipeDir = $config[ 'pipe_dir' ] ?? '';
+
+		$this->tmpDir = $config[ 'tmp_dir' ] ?? $this->tmpDir;
+
+		$this->appName = $config[ 'app_name' ] ?? $this->appName;
 	}
 
 	/**
@@ -381,6 +398,8 @@ WELCOME;
 					$worker = new Worker( [
 						'type'     => 'worker',
 						'pipe_dir' => $this->pipeDir,
+						'tmp_dir'  => $this->tmpDir,
+						'app_name' => $this->appName,
 					] );
 					$worker->pipeMake();
 					$worker->hangup( $this->workBusinessClosure );
@@ -401,8 +420,11 @@ WELCOME;
 			default:
 				try {
 					$worker                = new Worker( [
-						'type' => 'master',
-						'pid'  => $pid,
+						'type'     => 'worker',
+						'pid'      => $pid,
+						'pipe_dir' => $this->pipeDir,
+						'tmp_dir'  => $this->tmpDir,
+						'app_name' => $this->appName,
 					] );
 					$this->workers[ $pid ] = $worker;
 				} catch ( Exception $e ) {

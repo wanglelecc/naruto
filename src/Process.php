@@ -17,6 +17,10 @@ use Closure;
  */
 abstract class Process
 {
+	public $appName = 'phpconsole';
+
+	public $tmpDir = 'storage/tmp/';
+
 	/**
 	 * current process type such as master and worker
 	 *
@@ -320,6 +324,6 @@ abstract class Process
 	 */
 	protected function setProcessName()
 	{
-		cli_set_process_title( 'phpconsole: ' . $this->type . ' process' );
+		cli_set_process_title( $this->appName . ': ' . $this->type . ' process' );
 	}
 }
