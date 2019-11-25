@@ -36,7 +36,6 @@ class Worker extends Process
 		$this->pid     = isset( $config[ 'pid' ] ) ? $config[ 'pid' ] : $this->pid;
 		$this->pipeDir = isset( $config[ 'pipe_dir' ] ) && !empty( $config[ 'pipe_dir' ] )
 			? $config[ 'pipe_dir' ] : $this->pipeDir;
-
 		$this->tmpDir  = isset( $config[ 'tmp_dir' ] ) ? $config[ 'tmp_dir' ] : $this->tmpDir;
 		$this->appName = isset( $config[ 'app_name' ] ) ? $config[ 'app_name' ] : $this->appName;
 

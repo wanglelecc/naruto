@@ -238,6 +238,7 @@ WELCOME;
 		if ( !file_exists( $envPath . '.env' ) ) {
 			copy( $envPath . '.env.example', $envPath . '.env' );
 		}
+
 		if ( !$this->env = parse_ini_file( $envPath . '.env', true ) ) {
 			ProcessException::error( [
 				'msg' => [
@@ -279,11 +280,11 @@ WELCOME;
 		self::$hangupLoopMicrotime = $config[ 'hangup_loop_microtime' ] ?? self::$hangupLoopMicrotime;
 
 		// set pipe dir
-		$this->pipeDir = $config[ 'pipe_dir' ] ?? '';
+		$this->pipeDir = $config[ 'pipe_dir' ] ?? ($this->env['config']['pipeDir'] ?? '');
 
-		$this->tmpDir = $config[ 'tmp_dir' ] ?? $this->tmpDir;
+		$this->tmpDir = $config[ 'tmp_dir' ] ?? ($this->env['config']['tmpDir'] ?? $this->tmpDir);
 
-		$this->appName = $config[ 'app_name' ] ?? $this->appName;
+		$this->appName = $config[ 'app_name' ] ?? ($this->env['config']['appName'] ?? $this->appName);
 	}
 
 	/**

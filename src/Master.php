@@ -30,7 +30,13 @@ class Master extends Process
 	public function __construct($config = [])
 	{
 		$this->type = 'master';
-		$this->setProcessName();
+
+		$this->pipeDir = isset( $config[ 'pipe_dir' ] ) && !empty( $config[ 'pipe_dir' ] )
+			? $config[ 'pipe_dir' ] : $this->pipeDir;
+		$this->tmpDir  = isset( $config[ 'tmp_dir' ] ) ? $config[ 'tmp_dir' ] : $this->tmpDir;
+		$this->appName = isset( $config[ 'app_name' ] ) ? $config[ 'app_name' ] : $this->appName;
+		$this->pidDir  = $this->tmpDir;
+		$this->pidPath = $this->pidDir . '/master.pid';
 
 		parent::__construct();
 
@@ -41,11 +47,7 @@ class Master extends Process
 			],
 		] );
 
-		$this->tmpDir  = isset( $config[ 'tmp_dir' ] ) ? $config[ 'tmp_dir' ] : $this->tmpDir;
-		$this->appName = isset( $config[ 'app_name' ] ) ? $config[ 'app_name' ] : $this->appName;
-
-		$this->pidDir  = $this->tmpDir;
-		$this->pidPath = $this->pidDir. '/master.pid';
+		$this->setProcessName();
 
 		// make pipe
 		$this->pipeMake();
