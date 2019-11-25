@@ -17,8 +17,18 @@ use Closure;
  */
 abstract class Process
 {
+	/**
+	 * app name
+	 *
+	 * @var string
+	 */
 	public $appName = 'phpconsole';
 
+	/**
+	 * tmp dir
+	 *
+	 * @var string
+	 */
 	public $tmpDir = 'storage/tmp/';
 
 	/**

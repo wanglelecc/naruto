@@ -20,9 +20,19 @@ use Closure;
 class Master extends Process
 {
 
-	protected $pidDir = '';
+	/**
+	 * app name
+	 *
+	 * @var string
+	 */
+	public $appName = 'phpconsole';
 
-	protected $pidPath = '';
+	/**
+	 * tmp dir
+	 *
+	 * @var string
+	 */
+	public $tmpDir = 'storage/tmp/';
 
 	/**
 	 * construct function
@@ -69,7 +79,11 @@ class Master extends Process
 		# do nothing...
 	}
 
-
+	/**
+	 * create pid
+	 *
+	 * @return void
+	 */
 	public function pidMake()
 	{
 		$pidDir = dirname( $this->pidPath );
@@ -80,6 +94,11 @@ class Master extends Process
 		file_put_contents( $this->pidPath, posix_getpid() );
 	}
 
+	/**
+	 * clear pipe
+	 *
+	 * @return void
+	 */
 	public function clearPid()
 	{
 		if ( file_exists( $this->pidPath ) ) {
