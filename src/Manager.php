@@ -401,6 +401,7 @@ WELCOME;
 						'tmp_dir'  => $this->tmpDir,
 						'app_name' => $this->appName,
 					] );
+					$worker->setProcessName();
 					$worker->pipeMake();
 					$worker->hangup( $this->workBusinessClosure );
 				} catch ( Exception $e ) {

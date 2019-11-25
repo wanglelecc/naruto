@@ -45,7 +45,7 @@ class Master extends Process
 		$this->appName = isset( $config[ 'app_name' ] ) ? $config[ 'app_name' ] : $this->appName;
 
 		$this->pidDir  = $this->tmpDir;
-		$this->pidPath = $this->pidDir . 'master.pid';
+		$this->pidPath = $this->pidDir. '/master.pid';
 
 		// make pipe
 		$this->pipeMake();

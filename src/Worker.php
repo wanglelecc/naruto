@@ -40,9 +40,6 @@ class Worker extends Process
 		$this->tmpDir  = isset( $config[ 'tmp_dir' ] ) ? $config[ 'tmp_dir' ] : $this->tmpDir;
 		$this->appName = isset( $config[ 'app_name' ] ) ? $config[ 'app_name' ] : $this->appName;
 
-
-		$this->setProcessName();
-
 		// log
 		ProcessException::info( [
 			'msg' => [

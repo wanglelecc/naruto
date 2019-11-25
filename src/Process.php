@@ -322,7 +322,7 @@ abstract class Process
 	 *
 	 * @return void
 	 */
-	protected function setProcessName()
+	public function setProcessName()
 	{
 		cli_set_process_title( $this->appName . ': ' . $this->type . ' process' );
 	}
