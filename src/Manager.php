@@ -106,13 +106,6 @@ class Manager
 	private $pipeDir = '';
 
 	/**
-	 * env config
-	 *
-	 * @var array
-	 */
-	private $env = [];
-
-	/**
 	 * support linux signals
 	 *
 	 * @var array
@@ -138,11 +131,8 @@ class Manager
 	 */
 	public function __construct($config = [], Closure $closure)
 	{
-		// load env
-		$this->loadEnv();
-
 		// set timezone
-		date_default_timezone_set( $this->env[ 'config' ][ 'timezone' ] ?? 'Asia/Shanghai' );
+		date_default_timezone_set( config('app.timezone', 'Asia/Shanghai') );
 
 		// welcome
 		$this->welcome();
@@ -230,25 +220,6 @@ WELCOME;
 	}
 
 	/**
-	 * load env
-	 */
-	private function loadEnv()
-	{
-		$envPath = __DIR__ . '/../';
-		if ( !file_exists( $envPath . '.env' ) ) {
-			copy( $envPath . '.env.example', $envPath . '.env' );
-		}
-
-		if ( !$this->env = parse_ini_file( $envPath . '.env', true ) ) {
-			ProcessException::error( [
-				'msg' => [
-					'msg' => 'Parse ini file fail',
-				],
-			] );
-		}
-	}
-
-	/**
 	 * the _get magic function
 	 *
 	 * @param string $name property name
@@ -280,11 +251,11 @@ WELCOME;
 		self::$hangupLoopMicrotime = $config[ 'hangup_loop_microtime' ] ?? self::$hangupLoopMicrotime;
 
 		// set pipe dir
-		$this->pipeDir = $config[ 'pipe_dir' ] ?? ($this->env['config']['pipeDir'] ?? '');
+		$this->pipeDir = $config[ 'pipe_dir' ] ?? config('storage.pipe', '') . DIRECTORY_SEPARATOR;
 
-		$this->tmpDir = $config[ 'tmp_dir' ] ?? ($this->env['config']['tmpDir'] ?? $this->tmpDir);
+		$this->tmpDir = $config[ 'tmp_dir' ] ?? config('storage.temp', '') . DIRECTORY_SEPARATOR;
 
-		$this->appName = $config[ 'app_name' ] ?? ($this->env['config']['appName'] ?? $this->appName);
+		$this->appName = $config[ 'app_name' ] ?? config('app.name', $this->appName);
 	}
 
 	/**

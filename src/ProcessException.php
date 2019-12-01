@@ -28,7 +28,7 @@ class ProcessException extends Exception
 	 *
 	 * @var string
 	 */
-	private static $logPath = 'storage/logs/phpconsole';
+	private static $logPath = 'phpconsole';
 	
 	/**
 	 * the magic __callStatics function
@@ -43,9 +43,9 @@ class ProcessException extends Exception
 		if (! in_array($method, self::$methodSupport)) {
 			throw new Exception('log method not support', 500);
 		}
-		self::$logPath = (isset($data['path'])? $data['path']: '')? : self::$logPath;
+		$logPath = (isset($data['path'])? $data['path']: '')? : config('storage.logs') . DIRECTORY_SEPARATOR . self::$logPath;
         $msg = self::decorate($method, $data['msg']);
-		error_log($msg, 3, self::$logPath . '.' . date('Y-m-d', time()) . '.log');
+		error_log($msg, 3, $logPath . '.' . date('Y-m-d', time()) . '.log');
 		if ($method === 'error') {
 			exit;
 		}

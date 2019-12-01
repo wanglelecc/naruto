@@ -1,6 +1,7 @@
 <?php
 
 return [
-    "temp" => "storage/tmp/",
-    "pipe" => "/tmp/",
+    "temp" => "storage/tmp",
+    "logs" => "storage/logs",
+    "pipe" => "/tmp",
 ];
