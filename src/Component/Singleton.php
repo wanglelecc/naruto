@@ -1,19 +1,28 @@
 <?php
 // +----------------------------------------------------------------------
 // |  
-// | Interface Callback
+// | Singleton.php
 // | 
 // +----------------------------------------------------------------------
 // | Copyright (c) https://www.56br.com/ All rights reserved.
 // +----------------------------------------------------------------------
 // | Author:  wll <wanglelecc@gmail.com>
 // +----------------------------------------------------------------------
-// | Date: 2019-12-01 15:40
+// | Date: 2019-12-01 20:57
 // +----------------------------------------------------------------------
 
-namespace Console;
+namespace Console\Component;
 
-interface Callback
+
+trait Singleton
 {
-    public function handle(Process $process);
+    private static $instance;
+
+    static function getInstance(...$args)
+    {
+        if(!isset(self::$instance)){
+            self::$instance = new static(...$args);
+        }
+        return self::$instance;
+    }
 }

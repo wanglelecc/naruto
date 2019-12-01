@@ -1,36 +1,21 @@
 <?php
 // +----------------------------------------------------------------------
 // |  
-// | Demo Consumer
+// | Interface Callback
 // | 
 // +----------------------------------------------------------------------
 // | Copyright (c) https://www.56br.com/ All rights reserved.
 // +----------------------------------------------------------------------
 // | Author:  wll <wanglelecc@gmail.com>
 // +----------------------------------------------------------------------
-// | Date: 2019-12-01 15:43
+// | Date: 2019-12-01 15:40
 // +----------------------------------------------------------------------
 
-namespace App\Consumer;
+namespace Console\Business;
 
 use Console\Process;
-use Console\ProcessException;
-use Console\Business\Callback;
 
-
-class Demo extends Consumer implements Callback
+interface Callback
 {
-    public function handle(Process $process)
-    {
-        $time = microtime(true);
-
-        ProcessException::debug([
-            'msg' => [
-                'microtime' => $time,
-                'debug'     => 'this is the business logic ' . $process->pid,
-            ]
-        ]);
-
-        sleep(1);
-    }
+    public function handle(Process $process);
 }

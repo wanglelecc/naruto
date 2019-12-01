@@ -1,36 +1,32 @@
 <?php
 // +----------------------------------------------------------------------
 // |  
-// | Demo Consumer
+// | helpers.php
 // | 
 // +----------------------------------------------------------------------
 // | Copyright (c) https://www.56br.com/ All rights reserved.
 // +----------------------------------------------------------------------
 // | Author:  wll <wanglelecc@gmail.com>
 // +----------------------------------------------------------------------
-// | Date: 2019-12-01 15:43
+// | Date: 2019-12-01 21:33
 // +----------------------------------------------------------------------
 
-namespace App\Consumer;
+use Console\Config;
 
-use Console\Process;
-use Console\ProcessException;
-use Console\Business\Callback;
-
-
-class Demo extends Consumer implements Callback
+if( !function_exists("config") )
 {
-    public function handle(Process $process)
-    {
-        $time = microtime(true);
-
-        ProcessException::debug([
-            'msg' => [
-                'microtime' => $time,
-                'debug'     => 'this is the business logic ' . $process->pid,
-            ]
-        ]);
-
-        sleep(1);
+    /**
+     * 获取配置文件
+     *
+     * @param $key
+     * @param null $default
+     *
+     * @return array|mixed|null
+     *
+     * @author wll <wanglelecc@gmail.com>
+     * @date 2019-12-01 21:34
+     */
+    function config($key, $default = null){
+        return Config::getInstance()->get($key, $default);
     }
 }

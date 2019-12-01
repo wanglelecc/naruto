@@ -14,6 +14,7 @@ use Console\Process;
 use Console\ProcessException;
 use Exception as Ex;
 use App\demo\Test;
+use Console\Config;
 
 // require composer autoload file
 require(__DIR__ . '/vendor/autoload.php');
@@ -136,6 +137,11 @@ switch ($cmd){
 		echo "stop signal be sent success...\n";
 
 		break;
+    case 'debug':
+
+            var_dump(config('cache'));
+
+            break;
 	default :
 		$help();
 		break;

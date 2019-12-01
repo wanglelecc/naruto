@@ -22,6 +22,7 @@
             "Console\\": "./src"
         },
         "files" : [
+            "./app/helpers.php"
         ]
     },
     "scripts": {
